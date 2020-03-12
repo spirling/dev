@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+# closure prevent current scope visibility when including file
+$includeFile = function ($file) {
+    if (file_exists($file)) {
+        return include $file;
+    }
+    return null;
+};
+
+# temporary include
+require_once dirname(__DIR__) . '/spirling/routing/RouteCompiler.php';
+
+$compiler = new \Spirling\Routing\RouteCompiler();
+
+$routes = $includeFile(dirname(__DIR__) . '/config/dev/routes.test.php');
+
+if (is_array($routes) && !empty($routes)) {
+    foreach ($routes as $name => $route) {
+        printf('Route "%s":', $name);
+        echo PHP_EOL;
+        if (array_key_exists('path', $route)) {
+            $compiler->compilePath($route, $route['path']);
+        } else {
+            echo 'ERROR! Path is not defined';
+        }
+        echo PHP_EOL;
+        echo PHP_EOL;
+    }
+}

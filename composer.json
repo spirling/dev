@@ -1,0 +1,20 @@
+{
+  "name": "spirling/dev",
+  "description": "Spirling Dev App",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Johnie Spirling",
+      "email": "johnie.spirling@gmail.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": ""
+    }
+  ],
+  "require": {
+  }
+}
