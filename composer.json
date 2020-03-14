@@ -11,10 +11,21 @@
   ],
   "repositories": [
     {
-      "type": "git",
-      "url": ""
+      "type": "path",
+      "url": "spirling/interfaces"
+    },
+    {
+      "type": "path",
+      "url": "spirling/routing"
+    },
+    {
+      "type": "path",
+      "url": "spirling/framework"
     }
   ],
   "require": {
+    "spirling/interfaces": "*",
+    "spirling/routing": "*",
+    "spirling/framework": "*"
   }
 }

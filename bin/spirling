@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+use Spirling\Routing\Route;
+
+require_once '../vendor/autoload.php';
+
 # closure prevent current scope visibility when including file
 $includeFile = function ($file) {
     if (file_exists($file)) {
@@ -9,23 +13,37 @@ $includeFile = function ($file) {
     return null;
 };
 
-# temporary include
-require_once dirname(__DIR__) . '/spirling/routing/RouteCompiler.php';
+$routesData = $includeFile(dirname(__DIR__) . '/config/dev/routes.test.php');
 
-$compiler = new \Spirling\Routing\RouteCompiler();
-
-$routes = $includeFile(dirname(__DIR__) . '/config/dev/routes.test.php');
-
-if (is_array($routes) && !empty($routes)) {
-    foreach ($routes as $name => $route) {
-        printf('Route "%s":', $name);
-        echo PHP_EOL;
-        if (array_key_exists('path', $route)) {
-            $compiler->compilePath($route, $route['path']);
-        } else {
-            echo 'ERROR! Path is not defined';
+function createRoute(array $routeData)
+{
+    $path = null;
+    $routes = [];
+    extract($routeData, EXTR_OVERWRITE);
+    if (!is_null($path)) {
+        $methods = array_key_exists('methods', $routeData) ? $routeData['methods'] : [];
+        $defaults = array_key_exists('defaults', $routeData) ? $routeData['defaults'] : [];
+        $requirements = array_key_exists('requirements', $routeData) ? $routeData['requirements'] : [];
+        if (array_key_exists('routes', $routeData)) {
+            foreach ($routeData['routes'] as $name => $nestedRouteData) {
+                $nestedRoute = createRoute($nestedRouteData);
+                if (!is_null($nestedRoute)) {
+                    $routes[$name] = $nestedRoute;
+                }
+            }
         }
-        echo PHP_EOL;
-        echo PHP_EOL;
+
+        return new Route($path, $methods, $defaults, $requirements, $routes);
+    }
+    return null;
+}
+
+$routes = [];
+foreach ($routesData as $name => $routeData) {
+    $route = createRoute($routeData);
+    if (!is_null($route)) {
+        $routes[$name] = $route;
     }
 }
+
+var_dump($routes);
