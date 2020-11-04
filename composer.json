@@ -27,5 +27,8 @@
     "spirling/interfaces": "*",
     "spirling/routing": "*",
     "spirling/framework": "*"
+  },
+  "autoload": {
+    "Spirling\\AppDev": "src/"
   }
 }
